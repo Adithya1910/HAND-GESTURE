@@ -5,22 +5,21 @@ import numpy as np
 
 # Load the model and the class names
 model = load_model("keras_Model.h5", compile=False)  # Load the pre-trained model
-class_names = open("labels.txt", "r").readlines()  # Load the class names for predictions
+class_names = ["Palm", "Fist"]  # Assuming the class names are ["Palm", "Fist"] if labels.txt is not available
 
-# Define a function to predict signs
+# Define a function to preprocess and predict signs
 def predict_sign(image):
     # Preprocess the image
     image = cv2.resize(image, (224, 224), interpolation=cv2.INTER_AREA)
     image = np.asarray(image, dtype=np.float32).reshape(1, 224, 224, 3)
-    image = (image / 127.5) - 1
+    image = (image / 255.0)  # Normalize image
 
     # Perform the prediction
     prediction = model.predict(image)
     index = np.argmax(prediction)
-    class_name = class_names[index].strip()
+    class_name = class_names[index]
     confidence_score = prediction[0][index]
     return class_name, float(confidence_score)
-
 
 # Display the title and description
 st.markdown(
@@ -39,7 +38,6 @@ st.markdown(
     "</p>",
     unsafe_allow_html=True
 )
-
 
 # Add a sidebar with information about the app
 sidebar = st.sidebar
@@ -65,10 +63,11 @@ if st.button("Predict") and uploaded_files:
                 class_name, confidence_score = predict_sign(image)
                 
                 # Display the prediction result
-                if class_name == '1 Fist':
+                if class_name == 'Fist':
                     st.markdown("<h3 style='text-align: center; color: blue;'>It's a Fist</h3>", unsafe_allow_html=True)
-                elif class_name == '0 Palm':
+                elif class_name == 'Palm':
                     st.markdown("<h3 style='text-align: center; color: green;'>It's a Palm</h3>", unsafe_allow_html=True)
+                st.write(f"Confidence Score: {confidence_score:.2f}")
     
     # Display a thank you message
     st.markdown("<h4 style='text-align: center; color: orange;'>Thanks for using our Hand Gesture Recognition App!</h4>", unsafe_allow_html=True)
