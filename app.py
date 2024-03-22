@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 
 # Load the model and the class names
-model = load_model("keras_Model.h5", compile=False)  # Load the pre-trained model
+model = load_model("keras_model.h5", compile=False)  # Load the pre-trained model
 class_names = ["Palm", "Fist"]  # Assuming the class names are ["Palm", "Fist"] if labels.txt is not available
 
 # Define a function to preprocess and predict signs
